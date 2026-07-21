@@ -5,7 +5,7 @@ from .models import ConfirmationCode
 
 
 class UserBaseSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=150)
+    email = serializers.EmailField()
     password = serializers.CharField()
 
 
@@ -14,11 +14,11 @@ class AuthValidateSerializer(UserBaseSerializer):
 
 
 class RegisterValidateSerializer(UserBaseSerializer):
-    def validate_username(self, username):
+    def validate_email(self, email):
         try:
-            User.objects.get(username=username)
+            User.objects.get(email=email)
         except:
-            return username
+            return email
         raise ValidationError('User уже существует!')
 
 
