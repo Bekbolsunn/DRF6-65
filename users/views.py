@@ -15,6 +15,7 @@ from .serializers import (
 from .models import ConfirmationCode, CustomUser
 import random
 import string
+from rest_framework import permissions
 
 
 class AuthorizationAPIView(CreateAPIView):
