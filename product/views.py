@@ -97,6 +97,18 @@ class ProductListCreateAPIView(ListCreateAPIView):
         return Response(data=ProductSerializer(product).data,
                         status=status.HTTP_201_CREATED)
 
+    def get(self, request, *args, **kwargs):
+        from django.core.cache import cache
+        cached_data = cache.get("product_list")
+        print("REDIS")
+        if cached_data:
+            return Response(data=cached_data, status=status.HTTP_200_OK)
+        response = super().get(request, *args, **kwargs)
+        print("POSTGRES")
+        if response.data.get("total", 0) > 0:
+            cache.set("product_list", response.data, 300)
+        return response
+
 
 class ProductDetailAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.select_related('category').all()
