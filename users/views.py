@@ -74,11 +74,13 @@ class RegistrationAPIView(CreateAPIView):
                 code=code
             )
 
+            from users.tasks import send_otp_email
+            send_otp_email.delay(code, email)
+
         return Response(
             status=status.HTTP_201_CREATED,
             data={
                 'user_id': user.id,
-                'confirmation_code': code
             }
         )
 
@@ -93,7 +95,7 @@ class ConfirmUserAPIView(CreateAPIView):
         user_id = serializer.validated_data['user_id']
 
         with transaction.atomic():
-            user = User.objects.get(id=user_id)
+            user = CustomUser.objects.get(id=user_id)
             user.is_active = True
             user.save()
 

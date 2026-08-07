@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from rest_framework.exceptions import ValidationError
 from .models import ConfirmationCode
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from users.models import CustomUser
 
 class OauthCodeSerializer(serializers.Serializer):
     code = serializers.CharField()
@@ -44,8 +45,8 @@ class ConfirmationSerializer(serializers.Serializer):
         code = attrs.get('code')
 
         try:
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
+            user = CustomUser.objects.get(id=user_id)
+        except CustomUser.DoesNotExist:
             raise ValidationError('User не существует!')
 
         try:
